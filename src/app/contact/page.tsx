@@ -4,7 +4,7 @@ import { whatsappDigits } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Speak with the Hafe Atelier team on WhatsApp, email or Instagram.",
+  description: "Speak with the Hafé Atelier team on WhatsApp, email or Instagram.",
 };
 
 const linkClass =

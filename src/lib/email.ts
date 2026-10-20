@@ -1,7 +1,7 @@
 import { Resend } from "resend";
 import { MEASUREMENT_KEYS, SCRATCH_NAME, type BagItem, type RequestPayload } from "./request-schema";
 
-const FROM = "Hafe Atelier <onboarding@resend.dev>";
+const FROM = "Hafé Atelier <onboarding@resend.dev>";
 
 const escapeHtml = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");

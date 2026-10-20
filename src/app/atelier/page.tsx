@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 const chapters = [
   {
     title: "Rooted in Pakistan",
-    body: "Hafe began with a simple belief: occasionwear should be made for one woman, not for everyone. Every pattern is drawn, cut and finished in our workshop, by people who have spent their lives with needle and thread.",
+    body: "Hafé began with a simple belief: occasionwear should be made for one woman, not for everyone. Every pattern is drawn, cut and finished in our workshop, by people who have spent their lives with needle and thread.",
     image: "/images/placeholders/bridal.svg",
   },
   {

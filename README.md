@@ -1,6 +1,6 @@
-# Hafe Atelier
+# Hafé Atelier
 
-Marketing and made-to-order request site for Hafe Atelier, a bespoke Pakistani occasionwear label. Built with Next.js (App Router), Tailwind CSS 4, react-hook-form and zod. There is no checkout: clients build a request bag and send it to the atelier by email, with an optional WhatsApp hand-off. No prices are shown anywhere ("Price on request").
+Marketing and made-to-order request site for Hafé Atelier, a bespoke Pakistani occasionwear label. Built with Next.js (App Router), Tailwind CSS 4, react-hook-form and zod. There is no checkout: clients build a request bag and send it to the atelier by email, with an optional WhatsApp hand-off. No prices are shown anywhere ("Price on request").
 
 ## Setup
 
@@ -21,7 +21,7 @@ Other scripts: `npm run lint`, `npm test`, `npm run build`, `npm run start`, `np
 | `NEXT_PUBLIC_WHATSAPP_NUMBER` | Digits with country code (for example `923001234567`). Enables the WhatsApp option and contact link. Optional. |
 | `NEXT_PUBLIC_SITE_URL` | Public site URL (for example `https://hafeatelier.com`), used to resolve Open Graph image URLs. Defaults to `http://localhost:3000`. |
 
-Emails are sent from `Hafe Atelier <onboarding@resend.dev>` until you verify your own domain in Resend and change the sender in `src/lib/email.ts`.
+Emails are sent from `Hafé Atelier <onboarding@resend.dev>` until you verify your own domain in Resend and change the sender in `src/lib/email.ts`.
 
 ## Swapping photos
 

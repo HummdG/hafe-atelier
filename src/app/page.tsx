@@ -6,14 +6,14 @@ import { VisionSlide } from "@/components/home/VisionSlide";
 import { collections } from "@/data/collections";
 import { Footer } from "@/components/Footer";
 
-export const metadata: Metadata = { title: { absolute: "Discover Hafe | Hafe Atelier" } };
+export const metadata: Metadata = { title: { absolute: "Discover Hafé | Hafé Atelier" } };
 
 export default function Home() {
   return (
     <main>
       <FullPageSlider
         sections={[
-          { id: "discover", label: "Discover Hafe", content: <HeroSlide /> },
+          { id: "discover", label: "Discover Hafé", content: <HeroSlide /> },
           ...collections.map((c) => ({
             id: c.slug,
             label: c.name,

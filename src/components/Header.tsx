@@ -38,7 +38,7 @@ export function Header({ variant }: { variant: "overlay" | "solid" }) {
           </svg>
         </button>
         <Link href="/" className="font-serif text-2xl tracking-[0.15em] md:text-4xl">
-          HAFE ATELIER
+          HAFÉ ATELIER
         </Link>
         <Link href="/request" aria-label="Request bag" className="relative -mr-2 justify-self-end p-2">
           <TrolleyIcon />

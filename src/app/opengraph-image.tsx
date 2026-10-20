@@ -26,7 +26,7 @@ export default async function OpengraphImage() {
           fontFamily: "Cormorant Garamond",
         }}
       >
-        <div style={{ fontSize: 104, letterSpacing: 18, fontWeight: 400 }}>HAFE ATELIER</div>
+        <div style={{ fontSize: 104, letterSpacing: 18, fontWeight: 400 }}>HAFÉ ATELIER</div>
         <div style={{ width: 120, height: 2, background: "#b08d57", margin: "40px 0" }} />
         <div style={{ fontSize: 30, letterSpacing: 2, color: "#d9c7a5", maxWidth: 900, textAlign: "center" }}>
           {site.tagline}

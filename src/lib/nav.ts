@@ -1,5 +1,5 @@
 export const navLinks = [
-  { label: "Discover Hafe", href: "/" },
+  { label: "Discover Hafé", href: "/" },
   { label: "Collections", href: "/collections" },
   { label: "Bespoke", href: "/bespoke" },
   { label: "The Atelier", href: "/atelier" },

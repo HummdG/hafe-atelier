@@ -25,7 +25,7 @@ export async function Footer() {
           </ul>
         </nav>
       </div>
-      <p className="mt-12 text-center text-xs text-ivory/60">© {new Date().getFullYear()} Hafe Atelier</p>
+      <p className="mt-12 text-center text-xs text-ivory/60">© {new Date().getFullYear()} Hafé Atelier</p>
     </footer>
   );
 }

@@ -29,7 +29,7 @@ describe("Header", () => {
 
   it("links the wordmark home", () => {
     setup();
-    expect(screen.getByText("HAFE ATELIER").closest("a")).toHaveAttribute("href", "/");
+    expect(screen.getByText("HAFÉ ATELIER").closest("a")).toHaveAttribute("href", "/");
   });
 
   it("links to the request bag", () => {

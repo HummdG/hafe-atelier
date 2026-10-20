@@ -10,7 +10,7 @@ export function buildWhatsAppMessage(
 ): string {
   const lines = items.map((i) => (i.customisation.changes ? `• ${i.pieceName} (${i.customisation.changes})` : `• ${i.pieceName}`));
   const full = [
-    `Salaam Hafe Atelier, I'm ${client.name} from ${client.country}. I'd like to request:`,
+    `Salaam Hafé Atelier, I'm ${client.name} from ${client.country}. I'd like to request:`,
     ...lines,
     "Full details have been emailed.",
   ].join("\n");

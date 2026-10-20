@@ -1,7 +1,7 @@
 const leadTime = "6–8 weeks" as const;
 
 export const site = {
-  name: "Hafe Atelier",
+  name: "Hafé Atelier",
   tagline: "Bespoke Pakistani occasionwear for women around the world",
   vision: "Your Vision, brought to life",
   leadTime,
