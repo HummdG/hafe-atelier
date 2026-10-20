@@ -26,7 +26,18 @@ beforeEach(() => {
   );
 });
 
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {
+  vi.unstubAllGlobals();
+  history.replaceState(null, "", "/");
+});
+
+const intersect = (id: string) =>
+  act(() => {
+    ioCallback(
+      [{ isIntersecting: true, target: document.getElementById(id)! } as unknown as IntersectionObserverEntry],
+      {} as IntersectionObserver,
+    );
+  });
 
 describe("FullPageSlider", () => {
   it("renders one labelled dot per section", () => {
@@ -62,5 +73,26 @@ describe("FullPageSlider", () => {
     render(<FullPageSlider sections={sections} />);
     fireEvent.keyDown(screen.getByTestId("slider"), { key: "ArrowDown" });
     expect(scrollIntoView.mock.contexts[0]).toBe(document.getElementById("two"));
+  });
+
+  it("does not write a hash for the first slide on a bare load", () => {
+    const spy = vi.spyOn(history, "replaceState");
+    render(<FullPageSlider sections={sections} />);
+    spy.mockClear();
+    intersect("one");
+    expect(spy).not.toHaveBeenCalled();
+    expect(location.hash).toBe("");
+  });
+
+  it("scrolls to the section named by the hash on mount", () => {
+    history.replaceState(null, "", "/#three");
+    render(<FullPageSlider sections={sections} />);
+    expect(scrollIntoView.mock.contexts[0]).toBe(document.getElementById("three"));
+  });
+
+  it("ignores a hash that matches no section", () => {
+    history.replaceState(null, "", "/#nope");
+    render(<FullPageSlider sections={sections} />);
+    expect(scrollIntoView).not.toHaveBeenCalled();
   });
 });

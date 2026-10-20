@@ -11,7 +11,7 @@ export const SCRATCH_NAME = "Bespoke from scratch";
 export type MeasurementKey = (typeof MEASUREMENT_KEYS)[number];
 export type StandardSize = (typeof STANDARD_SIZES)[number];
 
-const measurementValue = z.number().positive().max(300);
+const measurementValue = z.number().positive("Must be greater than 0").max(300, "Must be 300 or less");
 
 export const customisationSchema = z
   .object({
@@ -36,7 +36,7 @@ export const customisationSchema = z
     if (c.sizeMode === "custom") {
       for (const k of REQUIRED_MEASUREMENTS) {
         const v = c.measurements?.[k];
-        if (typeof v !== "number" || !(v > 0)) {
+        if (v === undefined) {
           ctx.addIssue({ code: "custom", path: ["measurements", k], message: "Required" });
         }
       }

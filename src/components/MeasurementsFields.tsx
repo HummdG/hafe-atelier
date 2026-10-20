@@ -83,7 +83,7 @@ export function MeasurementsFields({ register, errors, unit, onUnitChange }: Pro
               <p className="mt-1 text-xs text-ink/50">{unit}</p>
               {err && (
                 <p id={`${id}-err`} role="alert" className="text-xs text-red-800">
-                  {MEASUREMENT_LABELS[k]} is required
+                  {err.message && err.message !== "Required" ? err.message : `${MEASUREMENT_LABELS[k]} is required`}
                 </p>
               )}
             </div>

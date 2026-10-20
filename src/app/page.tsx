@@ -6,7 +6,7 @@ import { VisionSlide } from "@/components/home/VisionSlide";
 import { collections } from "@/data/collections";
 import { Footer } from "@/components/Footer";
 
-export const metadata: Metadata = { title: "Discover Hafe | Hafe Atelier" };
+export const metadata: Metadata = { title: { absolute: "Discover Hafe | Hafe Atelier" } };
 
 export default function Home() {
   return (

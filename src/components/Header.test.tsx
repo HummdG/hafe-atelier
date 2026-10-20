@@ -58,4 +58,16 @@ describe("Header", () => {
     expect(btn).toHaveAttribute("aria-expanded", "true");
     expect(screen.getByRole("link", { name: "Collections" })).toBeInTheDocument();
   });
+
+  it("portals the drawer to body and restores focus to the menu button on close", () => {
+    const { container } = setup();
+    const btn = screen.getByRole("button", { name: /menu/i });
+    fireEvent.click(btn);
+    const nav = screen.getByRole("navigation", { name: "Main menu" });
+    expect(container.contains(nav)).toBe(false);
+    expect(document.body.contains(nav)).toBe(true);
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(screen.queryByRole("navigation", { name: "Main menu" })).not.toBeInTheDocument();
+    expect(btn).toHaveFocus();
+  });
 });

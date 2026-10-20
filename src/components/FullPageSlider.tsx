@@ -23,6 +23,7 @@ export function FullPageSlider({ sections }: { sections: Section[] }) {
           const index = sections.findIndex((s) => s.id === entry.target.id);
           if (index < 0) continue;
           setActive(index);
+          if (index === 0 && !location.hash) continue;
           history.replaceState(null, "", `#${sections[index].id}`);
         }
       },
@@ -33,6 +34,13 @@ export function FullPageSlider({ sections }: { sections: Section[] }) {
       if (el) observer.observe(el);
     }
     return () => observer.disconnect();
+  }, [sections]);
+
+  useEffect(() => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    if (id && sections.some((s) => s.id === id)) {
+      document.getElementById(id)?.scrollIntoView({ block: "start" });
+    }
   }, [sections]);
 
   const goTo = useCallback(

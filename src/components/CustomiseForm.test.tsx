@@ -26,6 +26,21 @@ describe("CustomiseForm", () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
+  it.each(["0", "-5"])("says 'Must be greater than 0' (not 'required') for chest = %s", async (value) => {
+    const user = userEvent.setup();
+    const onSubmit = vi.fn();
+    render(<CustomiseForm defaultValues={DEFAULT_CUSTOMISATION} submitLabel="Save" onSubmit={onSubmit} />);
+    await user.click(screen.getByLabelText("Custom measurements"));
+    await user.type(screen.getByLabelText("Shirt length"), "40");
+    await user.type(screen.getByLabelText("Chest"), value);
+    await user.type(screen.getByLabelText("Waist"), "30");
+    await user.type(screen.getByLabelText("Hip"), "38");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    expect(await screen.findByText("Must be greater than 0")).toBeInTheDocument();
+    expect(screen.queryByText("Chest is required")).not.toBeInTheDocument();
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
   it("submits numeric inch measurements without standardSize", async () => {
     const user = userEvent.setup();
     const onSubmit = vi.fn();

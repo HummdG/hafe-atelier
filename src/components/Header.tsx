@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useBag } from "./RequestBagProvider";
@@ -10,6 +10,12 @@ import { TrolleyIcon } from "./TrolleyIcon";
 export function Header({ variant }: { variant: "overlay" | "solid" }) {
   const [open, setOpen] = useState(false);
   const { count, hydrated } = useBag();
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const wasOpen = useRef(false);
+  useEffect(() => {
+    if (wasOpen.current && !open) menuButtonRef.current?.focus();
+    wasOpen.current = open;
+  }, [open]);
   const close = useCallback(() => setOpen(false), []);
   const cls =
     variant === "overlay"
@@ -20,6 +26,7 @@ export function Header({ variant }: { variant: "overlay" | "solid" }) {
     <header className={cls}>
       <div className="grid grid-cols-[1fr_auto_1fr] items-center px-4 py-3 md:px-8 md:py-4">
         <button
+          ref={menuButtonRef}
           type="button"
           aria-label="Menu"
           aria-expanded={open}

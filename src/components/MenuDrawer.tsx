@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { navLinks } from "@/lib/nav";
 
@@ -21,8 +22,9 @@ export function MenuDrawer({ onClose }: { onClose: () => void }) {
     };
   }, [onClose]);
 
-  return (
-    <div className="fixed inset-0 z-50">
+  // Portalled to <body> so the sticky header's stacking context cannot trap it beneath the marquee.
+  return createPortal(
+    <div className="fixed inset-0 z-[60]">
       <div className="absolute inset-0 bg-ink/50" onClick={onClose} aria-hidden="true" />
       <nav
         aria-label="Main menu"
@@ -41,6 +43,7 @@ export function MenuDrawer({ onClose }: { onClose: () => void }) {
           ))}
         </ul>
       </nav>
-    </div>
+    </div>,
+    document.body,
   );
 }

@@ -9,8 +9,10 @@ import { Footer } from "@/components/Footer";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: site.name,
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  title: { default: site.name, template: `%s | ${site.name}` },
   description: site.tagline,
+  openGraph: { siteName: site.name, title: site.name, description: site.tagline, type: "website" },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

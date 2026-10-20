@@ -1,36 +1,43 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hafe Atelier
 
-## Getting Started
+Marketing and made-to-order request site for Hafe Atelier, a bespoke Pakistani occasionwear label. Built with Next.js (App Router), Tailwind CSS 4, react-hook-form and zod. There is no checkout: clients build a request bag and send it to the atelier by email, with an optional WhatsApp hand-off. No prices are shown anywhere ("Price on request").
 
-First, run the development server:
+## Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env.local   # then fill in the values below
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Other scripts: `npm run lint`, `npm test`, `npm run build`, `npm run start`, `npm run placeholders` (regenerates the placeholder SVGs).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Variable | Purpose |
+| --- | --- |
+| `RESEND_API_KEY` | Resend key used to email each request. If unset, the email is logged to the server console and the request still succeeds. |
+| `ATELIER_EMAIL` | Address that receives requests. |
+| `NEXT_PUBLIC_WHATSAPP_NUMBER` | Digits with country code (for example `923001234567`). Enables the WhatsApp option and contact link. Optional. |
 
-## Learn More
+Emails are sent from `Hafe Atelier <onboarding@resend.dev>` until you verify your own domain in Resend and change the sender in `src/lib/email.ts`.
 
-To learn more about Next.js, take a look at the following resources:
+## Swapping photos
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Photos are SVG placeholders in `public/images/placeholders/`. Drop real images (JPG, PNG, WebP) into `public/images/` and update the paths:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Hero image, contact details, lead time and announcements: `src/lib/site.ts`
+- Collection covers: `src/data/collections.ts`
+- Piece photos: the `images` array of each piece in `src/data/pieces.ts` (first image is the cover)
 
-## Deploy on Vercel
+## Swapping fonts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Fonts are loaded with `next/font/google` in one file, `src/app/fonts.ts`: Cormorant Garamond as `--font-serif` and Jost as `--font-sans`. Replace the imports there; the CSS variable names stay the same so nothing else changes. Colour tokens (ink, ivory, gold, umber) live in the `@theme` block of `src/app/globals.css`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Adding a piece
+
+1. Add the photos under `public/images/`.
+2. Add an entry to the `pieces` array in `src/data/pieces.ts` with a unique `slug`, `name`, `collection` (`bridal`, `formal` or `festive`), `description`, `fabric`, `craft` and `images`.
+3. That is all: the piece page, collection listing and static params are generated from the data. Run `npm test` to check the data (unique slugs, valid collections).
+
+To add a new collection, extend `CollectionSlug` in `src/data/types.ts` and add it to `src/data/collections.ts`.
