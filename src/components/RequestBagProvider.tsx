@@ -1,7 +1,7 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, useState, type ReactNode } from "react";
-import { bagReducer, loadBag, saveBag } from "@/lib/bag";
+import { createContext, useCallback, useContext, useEffect, useMemo, useReducer, type ReactNode } from "react";
+import { bagReducer, loadBag, saveBag, type BagAction } from "@/lib/bag";
 import type { BagItem, Customisation } from "@/lib/request-schema";
 
 type BagContextValue = {
@@ -16,9 +16,16 @@ type BagContextValue = {
 
 const BagContext = createContext<BagContextValue | null>(null);
 
+type ProviderState = { items: BagItem[]; hydrated: boolean };
+const initialState: ProviderState = { items: [], hydrated: false };
+
+function providerReducer(state: ProviderState, action: BagAction): ProviderState {
+  const items = bagReducer(state.items, action);
+  return { items, hydrated: state.hydrated || action.type === "hydrate" };
+}
+
 export function RequestBagProvider({ children }: { children: ReactNode }) {
-  const [items, dispatch] = useReducer(bagReducer, []);
-  const [hydrated, setHydrated] = useState(false);
+  const [{ items, hydrated }, dispatch] = useReducer(providerReducer, initialState);
 
   useEffect(() => {
     try {
@@ -26,7 +33,6 @@ export function RequestBagProvider({ children }: { children: ReactNode }) {
     } catch {
       // storage blocked: start empty
     }
-    setHydrated(true);
   }, []);
 
   useEffect(() => {

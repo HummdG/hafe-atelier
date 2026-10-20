@@ -24,7 +24,8 @@ describe("customisationSchema", () => {
       customisationSchema.safeParse({ ...base, sizeMode: "custom", measurements: m });
     expect(c({ ...full, chest: 0 }).success).toBe(false);
     expect(c({ ...full, waist: -5 }).success).toBe(false);
-    const { hip: _hip, ...noHip } = full;
+    const noHip: Record<string, number> = { ...full };
+    delete noHip.hip;
     expect(c(noHip).success).toBe(false);
     const ok = customisationSchema.safeParse({
       ...base,
