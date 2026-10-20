@@ -18,5 +18,5 @@ export function buildWhatsAppMessage(
 }
 
 export function buildWhatsAppUrl(number: string, message: string): string {
-  return `https://wa.me/${number.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`;
+  return `https://wa.me/${number.replace(/\D/g, "")}?text=${encodeURIComponent(message.toWellFormed())}`;
 }

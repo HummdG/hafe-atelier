@@ -6,6 +6,13 @@ import { BAG_KEY } from "@/lib/bag";
 import { RequestView } from "./RequestView";
 import { ImagePicker } from "@/components/ImagePicker";
 
+const push = vi.fn();
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
+vi.mock("@/lib/site", async (orig) => {
+  const mod = await orig<typeof import("@/lib/site")>();
+  return { ...mod, site: { ...mod.site, whatsappNumber: "+44 7700 900123" } };
+});
+
 const cust = {
   changes: "As shown", colours: "", fabric: "", occasion: "",
   sizeMode: "standard", standardSize: "M", unit: "cm", notes: "",
@@ -26,7 +33,18 @@ function setup(items: unknown[] = seed, onSubmit = vi.fn().mockResolvedValue(und
 }
 
 describe("RequestView", () => {
-  beforeEach(() => localStorage.clear());
+  beforeEach(() => {
+    localStorage.clear();
+    push.mockReset();
+    vi.unstubAllGlobals();
+  });
+
+  async function fillAndClick(user: ReturnType<typeof userEvent.setup>, button: string) {
+    await user.type(await screen.findByLabelText("Name"), "Amina Khan");
+    await user.type(screen.getByLabelText("Email"), "amina@example.com");
+    await user.type(screen.getByLabelText("Country"), "UK");
+    await user.click(screen.getByRole("button", { name: button }));
+  }
 
   it("shows an empty state with links and no form", async () => {
     setup([]);
@@ -54,19 +72,49 @@ describe("RequestView", () => {
     expect(onSubmit).not.toHaveBeenCalled();
   });
 
-  it("sends via whatsapp with valid details", async () => {
+  it("sends by email, clears the bag and goes to the thank-you page", async () => {
     const user = userEvent.setup();
     const onSubmit = setup();
-    await user.type(await screen.findByLabelText("Name"), "Amina Khan");
-    await user.type(screen.getByLabelText("Email"), "amina@example.com");
-    await user.type(screen.getByLabelText("Country"), "UK");
-    await user.click(screen.getByRole("button", { name: "Send & continue on WhatsApp" }));
+    await fillAndClick(user, "Send request");
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/request/sent"));
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+    expect(onSubmit.mock.calls[0][2]).toBe("email");
+    expect(JSON.parse(localStorage.getItem(BAG_KEY) ?? "[]")).toEqual([]);
+  });
+
+  it("opens the WhatsApp window synchronously and points it at wa.me after success", async () => {
+    const user = userEvent.setup();
+    const win = { location: { href: "" }, close: vi.fn() };
+    const open = vi.fn().mockReturnValue(win);
+    vi.stubGlobal("open", open);
+    let resolveSubmit!: () => void;
+    const onSubmit = vi.fn(() => new Promise<void>((r) => (resolveSubmit = r)));
+    setup(seed, onSubmit);
+    await fillAndClick(user, "Send & continue on WhatsApp");
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
-    const [payload, files, via] = onSubmit.mock.calls[0];
+    expect(open).toHaveBeenCalledWith("", "_blank");
+    expect(win.location.href).toBe("");
+    resolveSubmit();
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/request/sent"));
+    expect(win.location.href).toMatch(/^https:\/\/wa\.me\/447700900123\?text=/);
+    expect(win.close).not.toHaveBeenCalled();
+    const [payload, files, via] = onSubmit.mock.calls[0] as unknown as [{ items: unknown[]; client: { name: string } }, File[], string];
     expect(via).toBe("whatsapp");
     expect(files).toEqual([]);
     expect(payload.items).toHaveLength(2);
     expect(payload.client.name).toBe("Amina Khan");
+  });
+
+  it("closes the WhatsApp window and shows the error on failure", async () => {
+    const user = userEvent.setup();
+    const win = { location: { href: "" }, close: vi.fn() };
+    vi.stubGlobal("open", vi.fn().mockReturnValue(win));
+    setup(seed, vi.fn().mockRejectedValue(new Error("Too many requests — please try again in a few minutes")));
+    await fillAndClick(user, "Send & continue on WhatsApp");
+    expect(await screen.findByText(/Too many requests/)).toBeInTheDocument();
+    expect(win.close).toHaveBeenCalled();
+    expect(push).not.toHaveBeenCalled();
+    expect(screen.getByText("Noor")).toBeInTheDocument();
   });
 });
 

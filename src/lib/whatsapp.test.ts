@@ -34,3 +34,10 @@ describe("whatsapp", () => {
     expect(new URL(url).searchParams.get("text")).toBe(msg);
   });
 });
+
+describe("whatsapp url sanitising", () => {
+  it("does not throw on a lone surrogate", () => {
+    expect(() => buildWhatsAppUrl("123", "bad \uD83D end")).not.toThrow();
+    expect(buildWhatsAppUrl("123", "bad \uD83D end")).toContain("%EF%BF%BD");
+  });
+});

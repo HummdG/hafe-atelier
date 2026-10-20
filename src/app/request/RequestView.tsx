@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useBag } from "@/components/RequestBagProvider";
@@ -11,7 +12,9 @@ import { ImagePicker } from "@/components/ImagePicker";
 import { Photo } from "@/components/Photo";
 import { getPiece } from "@/data/pieces";
 import { clientSchema, type BagItem, type ClientDetails, type RequestPayload } from "@/lib/request-schema";
+import { site } from "@/lib/site";
 import { submitRequest } from "@/lib/submit-request";
+import { buildWhatsAppMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 
 type Via = "email" | "whatsapp";
 type Props = {
@@ -33,7 +36,7 @@ export function RequestView({ onSubmit = submitRequest }: Props) {
   const [website, setWebsite] = useState("");
   const [sending, setSending] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
-  const [sent, setSent] = useState(false);
+  const router = useRouter();
 
   const {
     register,
@@ -44,31 +47,30 @@ export function RequestView({ onSubmit = submitRequest }: Props) {
     defaultValues: { name: "", email: "", whatsapp: "", country: "", preferredContact: "email" },
   });
 
-  const send = (via: Via) =>
-    handleSubmit(async (client) => {
-      setSending(true);
-      setSendError(null);
-      try {
-        await onSubmit({ items, client, website }, files, via);
+  const send = (via: Via) => (event?: React.BaseSyntheticEvent) => {
+    // Popup blockers only allow window.open inside the click, so open it before any await.
+    const popup = via === "whatsapp" && site.whatsappNumber ? window.open("", "_blank") : null;
+    return handleSubmit(
+      async (client) => {
+        setSending(true);
+        setSendError(null);
+        try {
+          await onSubmit({ items, client, website }, files, via);
+        } catch (err) {
+          popup?.close();
+          setSendError(err instanceof Error ? err.message : "Something went wrong — please try again or WhatsApp us");
+          setSending(false);
+          return;
+        }
+        if (popup) popup.location.href = buildWhatsAppUrl(site.whatsappNumber, buildWhatsAppMessage(items, client));
         clear();
-        setSent(true);
-      } catch {
-        setSendError("Something went wrong sending your request. Please try again.");
-      } finally {
-        setSending(false);
-      }
-    });
+        router.push("/request/sent");
+      },
+      () => popup?.close(),
+    )(event);
+  };
 
   if (!hydrated) return <p className="mt-8 text-ink/60" aria-busy="true">Loading your request…</p>;
-
-  if (sent) {
-    return (
-      <div role="status" className="mt-8">
-        <p className="font-serif text-2xl italic">Thank you. Your request has been sent.</p>
-        <p className="mt-2 text-ink/70">We&apos;ll reply within 48 hours with a consultation and quote.</p>
-      </div>
-    );
-  }
 
   if (items.length === 0) {
     return (
