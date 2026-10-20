@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 
 export type Section = {
   id: string;
@@ -37,7 +37,12 @@ export function FullPageSlider({ sections }: { sections: Section[] }) {
   }, [sections]);
 
   useEffect(() => {
-    const id = decodeURIComponent(location.hash.slice(1));
+    let id = "";
+    try {
+      id = decodeURIComponent(location.hash.slice(1));
+    } catch {
+      return; // malformed hash: ignore
+    }
     if (id && sections.some((s) => s.id === id)) {
       document.getElementById(id)?.scrollIntoView({ block: "start" });
     }
@@ -51,16 +56,29 @@ export function FullPageSlider({ sections }: { sections: Section[] }) {
     [sections],
   );
 
-  function onKeyDown(e: KeyboardEvent<HTMLDivElement>) {
-    if (e.target !== e.currentTarget) return;
-    if (e.key === "ArrowDown" || e.key === "PageDown") {
-      e.preventDefault();
-      goTo(active + 1);
-    } else if (e.key === "ArrowUp" || e.key === "PageUp") {
-      e.preventDefault();
-      goTo(active - 1);
-    }
-  }
+  const activeRef = useRef(0);
+  useEffect(() => {
+    activeRef.current = active;
+  }, [active]);
+
+  // Window-level so the keys work without first focusing the slider.
+  useEffect(() => {
+    const onKeyDown = (e: globalThis.KeyboardEvent) => {
+      if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey) return;
+      if (document.body.style.overflow === "hidden") return; // menu drawer open
+      const t = e.target;
+      if (t instanceof HTMLElement && t.closest("input, textarea, select, [contenteditable]")) return;
+      if (e.key === "ArrowDown" || e.key === "PageDown") {
+        e.preventDefault();
+        goTo(activeRef.current + 1);
+      } else if (e.key === "ArrowUp" || e.key === "PageUp") {
+        e.preventDefault();
+        goTo(activeRef.current - 1);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [goTo]);
 
   return (
     <>
@@ -68,7 +86,6 @@ export function FullPageSlider({ sections }: { sections: Section[] }) {
         ref={containerRef}
         data-testid="slider"
         tabIndex={0}
-        onKeyDown={onKeyDown}
         className="h-svh snap-y snap-mandatory overflow-y-auto overscroll-contain scroll-smooth outline-none motion-reduce:snap-none motion-reduce:scroll-auto"
       >
         {sections.map((s) => (

@@ -95,4 +95,29 @@ describe("FullPageSlider", () => {
     render(<FullPageSlider sections={sections} />);
     expect(scrollIntoView).not.toHaveBeenCalled();
   });
+
+  it("handles ArrowDown and PageDown on the document without focusing the slider", () => {
+    render(<FullPageSlider sections={sections} />);
+    fireEvent.keyDown(document.body, { key: "ArrowDown" });
+    expect(scrollIntoView.mock.contexts[0]).toBe(document.getElementById("two"));
+    fireEvent.keyDown(document.body, { key: "PageDown" });
+    expect(scrollIntoView).toHaveBeenCalledTimes(2);
+  });
+
+  it("ignores arrow keys typed in form fields", () => {
+    render(
+      <>
+        <input aria-label="x" />
+        <FullPageSlider sections={sections} />
+      </>,
+    );
+    fireEvent.keyDown(screen.getByLabelText("x"), { key: "ArrowDown" });
+    expect(scrollIntoView).not.toHaveBeenCalled();
+  });
+
+  it("does not throw on a malformed hash", () => {
+    history.replaceState(null, "", "/#%E0%A4%A");
+    expect(() => render(<FullPageSlider sections={sections} />)).not.toThrow();
+    expect(scrollIntoView).not.toHaveBeenCalled();
+  });
 });
