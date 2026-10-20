@@ -4,7 +4,8 @@ export type BagAction =
   | { type: "add"; item: BagItem }
   | { type: "update"; id: string; customisation: Customisation }
   | { type: "remove"; id: string }
-  | { type: "clear" };
+  | { type: "clear" }
+  | { type: "hydrate"; items: BagItem[] };
 
 export const BAG_KEY = "hafe-bag-v1";
 
@@ -18,6 +19,8 @@ export function bagReducer(state: BagItem[], action: BagAction): BagItem[] {
       return state.filter((i) => i.id !== action.id);
     case "clear":
       return [];
+    case "hydrate":
+      return action.items;
   }
 }
 

@@ -22,7 +22,7 @@ export function RequestBagProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      for (const item of loadBag(window.localStorage)) dispatch({ type: "add", item });
+      dispatch({ type: "hydrate", items: loadBag(window.localStorage) });
     } catch {
       // storage blocked: start empty
     }

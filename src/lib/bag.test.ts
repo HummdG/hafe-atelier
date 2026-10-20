@@ -31,6 +31,15 @@ describe("bagReducer", () => {
   });
 });
 
+describe("bagReducer hydrate", () => {
+  it("replaces state", () => {
+    const s0: BagItem[] = [mk("a")];
+    const s1 = bagReducer(s0, { type: "hydrate", items: [mk("b"), mk("c")] });
+    expect(s1.map((i) => i.id)).toEqual(["b", "c"]);
+    expect(s0).toHaveLength(1);
+  });
+});
+
 describe("loadBag", () => {
   it("returns [] for missing, corrupt or wrong-shape data", () => {
     expect(loadBag(store(null))).toEqual([]);
