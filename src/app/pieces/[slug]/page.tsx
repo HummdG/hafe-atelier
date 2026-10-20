@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getCollection } from "@/data/collections";
 import { getPiece, pieces } from "@/data/pieces";
 import { Gallery } from "@/components/Gallery";
+import { PieceActions } from "@/components/PieceActions";
 import { site } from "@/lib/site";
 
 type Props = { params: Promise<{ slug: string }> };
@@ -47,7 +48,9 @@ export default async function PiecePage({ params }: Props) {
           <dd>{piece.craft}</dd>
         </dl>
         <p className="mt-6 font-serif italic text-ink/80">Made to order · {site.leadTime}</p>
-        <div id="piece-actions" className="mt-8" />
+        <div className="mt-8">
+          <PieceActions piece={{ slug: piece.slug, name: piece.name }} />
+        </div>
       </div>
     </main>
   );
