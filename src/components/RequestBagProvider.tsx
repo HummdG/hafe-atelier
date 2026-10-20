@@ -28,11 +28,13 @@ export function RequestBagProvider({ children }: { children: ReactNode }) {
   const [{ items, hydrated }, dispatch] = useReducer(providerReducer, initialState);
 
   useEffect(() => {
+    let loaded: BagItem[] = [];
     try {
-      dispatch({ type: "hydrate", items: loadBag(window.localStorage) });
+      loaded = loadBag(window.localStorage);
     } catch {
       // storage blocked: start empty
     }
+    dispatch({ type: "hydrate", items: loaded });
   }, []);
 
   useEffect(() => {

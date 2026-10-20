@@ -1,5 +1,5 @@
 import { StrictMode } from "react";
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import { RequestBagProvider, useBag } from "./RequestBagProvider";
 import { BAG_KEY } from "@/lib/bag";
@@ -30,5 +30,20 @@ describe("RequestBagProvider", () => {
     );
     await waitFor(() => expect(screen.getByTestId("c")).toHaveTextContent("count:1"));
     await waitFor(() => expect(JSON.parse(localStorage.getItem(BAG_KEY)!)).toHaveLength(1));
+  });
+  it("still hydrates when localStorage access throws", async () => {
+    vi.spyOn(window, "localStorage", "get").mockImplementation(() => {
+      throw new Error("blocked");
+    });
+    try {
+      render(
+        <StrictMode>
+          <RequestBagProvider><Probe /></RequestBagProvider>
+        </StrictMode>,
+      );
+      await waitFor(() => expect(screen.getByTestId("c")).toHaveTextContent("count:0"));
+    } finally {
+      vi.restoreAllMocks();
+    }
   });
 });
