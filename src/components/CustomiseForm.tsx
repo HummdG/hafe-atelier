@@ -5,6 +5,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { customisationSchema, STANDARD_SIZES, type Customisation } from "@/lib/request-schema";
 import { MeasurementsFields, fieldClass, labelClass } from "./MeasurementsFields";
 
+export { fieldClass, labelClass };
+
+export const buttonClass =
+  "border border-ink bg-ink px-8 py-3 text-xs font-light uppercase tracking-[0.25em] text-ivory transition-colors hover:bg-umber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-ivory";
+export const secondaryButtonClass =
+  "border border-ink/40 px-8 py-3 text-xs font-light uppercase tracking-[0.25em] text-ink transition-colors hover:border-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-ivory";
+
 export const DEFAULT_CUSTOMISATION: Customisation = {
   changes: "As shown",
   colours: "",
@@ -106,10 +113,7 @@ export function CustomiseForm({ defaultValues, submitLabel, onSubmit }: Props) {
         <textarea id="cf-notes" rows={2} className={fieldClass} {...register("notes")} />
       </div>
 
-      <button
-        type="submit"
-        className="border border-ink bg-ink px-8 py-3 text-xs font-light uppercase tracking-[0.25em] text-ivory transition-colors hover:bg-umber focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-ivory"
-      >
+      <button type="submit" className={buttonClass}>
         {submitLabel}
       </button>
     </form>
