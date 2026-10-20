@@ -5,7 +5,20 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 // Task 5 fills this with the piece slugs; each gets <slug>-1.svg and <slug>-2.svg.
-export const PIECE_SLUGS = [];
+export const PIECE_SLUGS = [
+  "gul-e-rana-lehenga",
+  "noor-jahan-gharara",
+  "mehr-un-nisa-sharara",
+  "zarina-peshwas",
+  "raat-ki-rani-gown",
+  "sitara-anarkali",
+  "shabnam-cape-set",
+  "meher-jamawar-coat",
+  "chandni-kurta-set",
+  "gulabi-angarkha",
+  "eid-ka-chand-frock",
+  "baharan-sharara-set",
+];
 
 const outDir = join(dirname(fileURLToPath(import.meta.url)), "..", "public", "images", "placeholders");
 
