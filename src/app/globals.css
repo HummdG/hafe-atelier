@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #1a1613;
+  --color-ivory: #f7f3ee;
+  --color-gold: #b08d57;
+  --color-umber: #3b2a20;
+}
+
+body {
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
