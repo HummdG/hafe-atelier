@@ -27,7 +27,7 @@ Emails are sent from `Hafe Atelier <onboarding@resend.dev>` until you verify you
 
 Photos are SVG placeholders in `public/images/placeholders/`. Drop real images (JPG, PNG, WebP) into `public/images/` and update the paths:
 
-- Hero image, contact details, lead time and announcements: `src/lib/site.ts`
+- Hero image, contact details and lead time: `src/lib/site.ts`
 - Collection covers: `src/data/collections.ts`
 - Piece photos: the `images` array of each piece in `src/data/pieces.ts` (first image is the cover)
 

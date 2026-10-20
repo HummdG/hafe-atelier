@@ -22,7 +22,7 @@ export function MenuDrawer({ onClose }: { onClose: () => void }) {
     };
   }, [onClose]);
 
-  // Portalled to <body> so the sticky header's stacking context cannot trap it beneath the marquee.
+  // Portalled to <body> so the sticky header's stacking context cannot trap it beneath other page chrome.
   return createPortal(
     <div className="fixed inset-0 z-[60]">
       <div className="absolute inset-0 bg-ink/50" onClick={onClose} aria-hidden="true" />

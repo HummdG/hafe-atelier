@@ -19,7 +19,7 @@ export function Header({ variant }: { variant: "overlay" | "solid" }) {
   const close = useCallback(() => setOpen(false), []);
   const cls =
     variant === "overlay"
-      ? "absolute inset-x-0 top-8 z-30 text-ivory"
+      ? "absolute inset-x-0 top-0 z-30 text-ivory"
       : "sticky top-0 z-30 border-b border-ink/10 bg-ivory text-ink";
 
   return (

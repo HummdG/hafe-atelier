@@ -10,8 +10,7 @@ export const metadata: Metadata = { title: { absolute: "Discover Hafe | Hafe Ate
 
 export default function Home() {
   return (
-    // -mt-8 pulls the slider up under the 2rem marquee so slides fill the viewport from the top.
-    <main className="-mt-8">
+    <main>
       <FullPageSlider
         sections={[
           { id: "discover", label: "Discover Hafe", content: <HeroSlide /> },

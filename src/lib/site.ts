@@ -9,9 +9,4 @@ export const site = {
   whatsappNumber: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "",
   instagram: "https://instagram.com/hafeatelier",
   heroImage: "/images/placeholders/hero.svg",
-  announcements: [
-    "Worldwide delivery",
-    `Bespoke pieces made to order in ${leadTime}`,
-    "Consultations on WhatsApp",
-  ],
 };

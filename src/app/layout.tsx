@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { serif, sans } from "./fonts";
 import { site } from "@/lib/site";
 import { RequestBagProvider } from "@/components/RequestBagProvider";
-import { Marquee } from "@/components/Marquee";
 import { RouteHeader } from "@/components/Header";
 import { ConditionalFooter } from "@/components/ConditionalFooter";
 import { Footer } from "@/components/Footer";
@@ -20,7 +19,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" className={`${serif.variable} ${sans.variable} antialiased`}>
       <body className="min-h-svh bg-ivory text-ink font-sans">
         <RequestBagProvider>
-          <Marquee />
           <RouteHeader />
           {children}
           <ConditionalFooter>

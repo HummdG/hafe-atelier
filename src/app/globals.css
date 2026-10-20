@@ -12,8 +12,3 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans);
 }
-
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
-}
