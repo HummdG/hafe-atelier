@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { site } from "@/lib/site";
+import { whatsappDigits } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -10,7 +11,7 @@ const linkClass =
   "font-serif text-3xl font-light underline decoration-ink/20 underline-offset-8 transition-colors hover:decoration-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold md:text-4xl";
 
 export default function ContactPage() {
-  const digits = site.whatsappNumber.replace(/\D/g, "");
+  const digits = whatsappDigits(site.whatsappNumber);
   const whatsapp = digits ? `https://wa.me/${digits}` : null;
   const handle = `@${site.instagram.split("/").filter(Boolean).pop() ?? ""}`;
   const channels = [

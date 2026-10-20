@@ -1,19 +1,21 @@
 import { NextResponse } from "next/server";
 import { sendRequestEmail } from "@/lib/email";
 import { MAX_TOTAL_BYTES } from "@/lib/images";
-import { createRateLimiter } from "@/lib/rate-limit";
+import { clientKey, createRateLimiter } from "@/lib/rate-limit";
 import { requestSchema } from "@/lib/request-schema";
 
 // Node.js runtime is the default (the `runtime` segment config is incompatible with cacheComponents).
 
 const allow = createRateLimiter({ limit: 5, windowMs: 600_000 });
+const MAX_FILES = 10;
 const EXT: Record<string, string> = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "webp" };
 
 export async function POST(request: Request) {
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || "local";
-  if (!allow(ip)) return NextResponse.json({ error: "rate_limited" }, { status: 429 });
+  if (!allow(clientKey(request.headers))) return NextResponse.json({ error: "rate_limited" }, { status: 429 });
 
-  if (Number(request.headers.get("content-length")) > MAX_TOTAL_BYTES + 256_000) {
+  const contentLength = request.headers.get("content-length");
+  if (!contentLength) return NextResponse.json({ error: "length_required" }, { status: 411 });
+  if (Number(contentLength) > MAX_TOTAL_BYTES + 256_000) {
     return NextResponse.json({ error: "too_large" }, { status: 413 });
   }
 
@@ -37,6 +39,7 @@ export async function POST(request: Request) {
   if (parsed.data.website) return NextResponse.json({ ok: true });
 
   const files = form.getAll("files").filter((f): f is File => typeof f !== "string");
+  if (files.length > MAX_FILES) return NextResponse.json({ error: "too_large" }, { status: 413 });
   const total = files.reduce((sum, f) => sum + f.size, 0);
   if (total > MAX_TOTAL_BYTES || files.some((f) => !(f.type in EXT))) {
     return NextResponse.json({ error: "too_large" }, { status: 413 });

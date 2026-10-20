@@ -59,3 +59,14 @@ describe("requestSchema", () => {
     expect(requestSchema.safeParse({ items: [item], client }).success).toBe(true);
   });
 });
+
+describe("length limits", () => {
+  it("rejects over-length notes with a friendly message", () => {
+    const r = customisationSchema.safeParse({ ...base, sizeMode: "standard", standardSize: "M", notes: "x".repeat(2001) });
+    expect(r.success).toBe(false);
+    expect(r.error?.issues[0].message).toBe("Please keep this under 2000 characters");
+  });
+  it("accepts notes at the limit", () => {
+    expect(customisationSchema.safeParse({ ...base, sizeMode: "standard", standardSize: "M", notes: "x".repeat(2000) }).success).toBe(true);
+  });
+});

@@ -1,4 +1,5 @@
 export const MAX_TOTAL_BYTES = 4_000_000;
+export const PHOTOS_TOO_LARGE = "Photos too large — please attach fewer or smaller images (max 4 MB total)";
 const FALLBACK_MAX_BYTES = 1_500_000;
 
 export function isImage(file: File): boolean {

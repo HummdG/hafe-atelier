@@ -84,7 +84,7 @@ describe("RequestView", () => {
 
   it("opens the WhatsApp window synchronously and points it at wa.me after success", async () => {
     const user = userEvent.setup();
-    const win = { location: { href: "" }, close: vi.fn() };
+    const win = { location: { href: "" }, close: vi.fn(), opener: {} as unknown };
     const open = vi.fn().mockReturnValue(win);
     vi.stubGlobal("open", open);
     let resolveSubmit!: () => void;
@@ -93,6 +93,7 @@ describe("RequestView", () => {
     await fillAndClick(user, "Send & continue on WhatsApp");
     await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
     expect(open).toHaveBeenCalledWith("", "_blank");
+    expect(win.opener).toBeNull();
     expect(win.location.href).toBe("");
     resolveSubmit();
     await waitFor(() => expect(push).toHaveBeenCalledWith("/request/sent"));

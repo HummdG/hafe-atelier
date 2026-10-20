@@ -1,7 +1,7 @@
 "use client";
 
 import { useId, useState, type ChangeEvent } from "react";
-import { fitsBudget, isImage, resizeImage } from "@/lib/images";
+import { PHOTOS_TOO_LARGE, fitsBudget, isImage, resizeImage } from "@/lib/images";
 import { labelClass } from "./CustomiseForm";
 
 type Props = {
@@ -11,7 +11,6 @@ type Props = {
 };
 
 const NOT_IMAGE = "Only photos can be attached";
-const TOO_LARGE = "Photos too large — please attach fewer or smaller images (max 4 MB total)";
 
 export function ImagePicker({ files, onChange, resize = resizeImage }: Props) {
   const id = useId();
@@ -32,7 +31,7 @@ export function ImagePicker({ files, onChange, resize = resizeImage }: Props) {
       const resized = await Promise.all(picked.map((f) => resize(f)));
       const next = [...files, ...resized];
       if (!fitsBudget(next.map((f) => f.size))) {
-        setError(TOO_LARGE);
+        setError(PHOTOS_TOO_LARGE);
         return;
       }
       setError(null);

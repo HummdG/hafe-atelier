@@ -18,7 +18,6 @@ export const DEFAULT_CUSTOMISATION: Customisation = {
   fabric: "",
   occasion: "",
   sizeMode: "standard",
-  standardSize: "M",
   unit: "cm",
   notes: "",
 };
@@ -92,7 +91,8 @@ export function CustomiseForm({ defaultValues, submitLabel, onSubmit }: Props) {
       {sizeMode === "standard" ? (
         <div className="max-w-xs">
           <label htmlFor="cf-size" className={labelClass}>Size</label>
-          <select id="cf-size" className={fieldClass} aria-invalid={errors.standardSize ? "true" : undefined} {...register("standardSize")}>
+          <select id="cf-size" className={fieldClass} aria-invalid={errors.standardSize ? "true" : undefined} {...register("standardSize", { setValueAs: (v) => v || undefined })}>
+            <option value="">Choose size</option>
             {STANDARD_SIZES.map((s) => (
               <option key={s} value={s}>{s}</option>
             ))}

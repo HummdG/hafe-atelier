@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { buttonClass, secondaryButtonClass } from "@/components/CustomiseForm";
 import { site } from "@/lib/site";
+import { whatsappDigits } from "@/lib/whatsapp";
 
 export const metadata: Metadata = { title: "Thank you" };
 
 export default function RequestSentPage() {
-  const digits = site.whatsappNumber.replace(/\D/g, "");
+  const digits = whatsappDigits(site.whatsappNumber);
   return (
     <main className="mx-auto max-w-3xl bg-ivory px-6 py-24 text-center">
       <h1 className="font-serif text-4xl italic md:text-5xl">Thank you — your vision is with us</h1>

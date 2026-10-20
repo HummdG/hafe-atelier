@@ -50,6 +50,7 @@ export function RequestView({ onSubmit = submitRequest }: Props) {
   const send = (via: Via) => (event?: React.BaseSyntheticEvent) => {
     // Popup blockers only allow window.open inside the click, so open it before any await.
     const popup = via === "whatsapp" && site.whatsappNumber ? window.open("", "_blank") : null;
+    if (popup) popup.opener = null;
     return handleSubmit(
       async (client) => {
         setSending(true);

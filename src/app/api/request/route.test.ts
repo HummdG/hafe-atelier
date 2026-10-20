@@ -21,7 +21,7 @@ function req(body: unknown, files: File[] = [], ipAddr = `10.0.0.${++ip}`) {
   fd.set("payload", JSON.stringify(body));
   for (const f of files) fd.append("files", f);
   return new Request("http://localhost/api/request", {
-    method: "POST", body: fd, headers: { "x-forwarded-for": ipAddr },
+    method: "POST", body: fd, headers: { "x-forwarded-for": ipAddr, "content-length": "1000" },
   });
 }
 const jpg = (size = 10, type = "image/jpeg") => new File([new Uint8Array(size)], "a.jpg", { type });
@@ -48,7 +48,7 @@ describe("POST /api/request", () => {
   it("400 on malformed payload json", async () => {
     const fd = new FormData();
     fd.set("payload", "{not json");
-    const res = await POST(new Request("http://localhost/api/request", { method: "POST", body: fd, headers: { "x-forwarded-for": "9.9.9.9" } }));
+    const res = await POST(new Request("http://localhost/api/request", { method: "POST", body: fd, headers: { "x-forwarded-for": "9.9.9.9", "content-length": "100" } }));
     expect(res.status).toBe(400);
   });
   it("413 when files exceed the budget", async () => {
@@ -62,6 +62,24 @@ describe("POST /api/request", () => {
     const res = await POST(big);
     expect(res.status).toBe(413);
     expect(sendRequestEmail).not.toHaveBeenCalled();
+  });
+  it("411 when content-length is missing", async () => {
+    const fd = new FormData();
+    fd.set("payload", JSON.stringify(payload));
+    const res = await POST(new Request("http://localhost/api/request", { method: "POST", body: fd, headers: { "x-forwarded-for": "5.5.5.5" } }));
+    expect(res.status).toBe(411);
+    expect(await res.json()).toEqual({ error: "length_required" });
+    expect(sendRequestEmail).not.toHaveBeenCalled();
+  });
+  it("413 for more than 10 files", async () => {
+    const res = await POST(req(payload, Array.from({ length: 11 }, () => jpg())));
+    expect(res.status).toBe(413);
+    expect(sendRequestEmail).not.toHaveBeenCalled();
+  });
+  it("429s by the last XFF hop even when the first hop is spoofed", async () => {
+    const r = (first: string) => req(payload, [], `${first}, 4.4.4.4`);
+    for (let i = 0; i < 5; i++) expect((await POST(r(`1.0.0.${i}`))).status).toBe(200);
+    expect((await POST(r("1.0.0.99"))).status).toBe(429);
   });
   it("413 for a non-image file", async () => {
     const res = await POST(req(payload, [jpg(10, "text/plain")]));

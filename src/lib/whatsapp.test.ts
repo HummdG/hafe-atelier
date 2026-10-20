@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildWhatsAppMessage, buildWhatsAppUrl, WHATSAPP_MAX } from "./whatsapp";
+import { buildWhatsAppMessage, buildWhatsAppUrl, whatsappDigits, WHATSAPP_MAX } from "./whatsapp";
 import type { BagItem } from "./request-schema";
 
 const base = {
@@ -17,6 +17,14 @@ describe("whatsapp", () => {
     expect(msg).toContain("Bespoke from scratch");
     expect(msg).toContain("I'm Amina from UK");
     expect(msg).toContain("Full details have been emailed.");
+  });
+  it("omits the parentheses when changes is empty", () => {
+    const msg = buildWhatsAppMessage([scratch("")], client);
+    expect(msg).toContain("• Bespoke from scratch");
+    expect(msg).not.toContain("()");
+  });
+  it("strips non-digits from a number", () => {
+    expect(whatsappDigits("+44 (7700) 900-123")).toBe("447700900123");
   });
   it("truncates long Urdu+emoji notes without splitting surrogates", () => {
     const long = "یہ ایک لمبا نوٹ ہے 😀".repeat(500);

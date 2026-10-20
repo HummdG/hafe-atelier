@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+const text = (max: number) => z.string().max(max, `Please keep this under ${max} characters`);
+
 export const MEASUREMENT_KEYS = [
   "shirtLength", "chest", "waist", "hip", "shoulder",
   "sleeveLength", "armhole", "trouserLength", "bottom",
@@ -15,11 +17,11 @@ const measurementValue = z.number().positive("Must be greater than 0").max(300, 
 
 export const customisationSchema = z
   .object({
-    changes: z.string(),
-    colours: z.string(),
-    fabric: z.string(),
-    occasion: z.string(),
-    eventDate: z.string().optional(),
+    changes: text(1000),
+    colours: text(1000),
+    fabric: text(1000),
+    occasion: text(1000),
+    eventDate: text(20).optional(),
     sizeMode: z.enum(["standard", "custom"]),
     standardSize: z.enum(STANDARD_SIZES).optional(),
     unit: z.enum(["cm", "in"]),
@@ -27,7 +29,7 @@ export const customisationSchema = z
       .object(Object.fromEntries(MEASUREMENT_KEYS.map((k) => [k, measurementValue.optional()])) as Record<MeasurementKey, z.ZodOptional<typeof measurementValue>>)
       .partial()
       .optional(),
-    notes: z.string(),
+    notes: text(2000),
   })
   .superRefine((c, ctx) => {
     if (c.sizeMode === "standard" && !c.standardSize) {
@@ -45,18 +47,18 @@ export const customisationSchema = z
 export type Customisation = z.infer<typeof customisationSchema>;
 
 export const bagItemSchema = z.object({
-  id: z.string(),
-  pieceSlug: z.string().nullable(),
-  pieceName: z.string(),
+  id: text(100),
+  pieceSlug: text(100).nullable(),
+  pieceName: text(200),
   customisation: customisationSchema,
 });
 export type BagItem = z.infer<typeof bagItemSchema>;
 
 export const clientSchema = z.object({
-  name: z.string().min(2),
-  email: z.email(),
-  whatsapp: z.string(),
-  country: z.string().min(2),
+  name: text(100).min(2),
+  email: z.email().max(254, "Please keep this under 254 characters"),
+  whatsapp: text(30),
+  country: text(100).min(2),
   preferredContact: z.enum(["email", "whatsapp"]),
 });
 export type ClientDetails = z.infer<typeof clientSchema>;

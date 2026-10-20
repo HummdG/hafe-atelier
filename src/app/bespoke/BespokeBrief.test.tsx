@@ -27,6 +27,7 @@ describe("BespokeBrief", () => {
       </RequestBagProvider>,
     );
     await user.type(screen.getByLabelText(/what would you change/i), "A emerald gharara for my nikah");
+    await user.selectOptions(screen.getByLabelText("Size"), "M");
     await user.click(screen.getByRole("button", { name: /add my brief/i }));
     await vi.waitFor(() => expect(push).toHaveBeenCalledWith("/request"));
     expect(screen.getByTestId("probe")).toHaveTextContent("count:1|null|Bespoke from scratch");
