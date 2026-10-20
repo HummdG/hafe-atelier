@@ -155,14 +155,14 @@ export function RequestView({ onSubmit = submitRequest }: Props) {
       </div>
 
       <div>
+        <div role="status" aria-live="polite">
+          {sendError && <p className="mb-4 text-sm text-red-800">{sendError}</p>}
+        </div>
         <div className="flex flex-wrap gap-3">
           <button type="submit" className={buttonClass} disabled={sending}>Send request</button>
           <button type="button" className={secondaryButtonClass} disabled={sending} onClick={send("whatsapp")}>
             Send &amp; continue on WhatsApp
           </button>
-        </div>
-        <div role="status" aria-live="polite">
-          {sendError && <p className="mt-4 text-sm text-red-800">{sendError}</p>}
         </div>
         <p className="mt-4 text-sm text-ink/70">
           We&apos;ll reply within 48 hours with a consultation and quote. No payment is taken online.

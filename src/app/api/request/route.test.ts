@@ -56,6 +56,13 @@ describe("POST /api/request", () => {
     expect(res.status).toBe(413);
     expect(await res.json()).toEqual({ error: "too_large" });
   });
+  it("413 on an oversized content-length before reading the body", async () => {
+    const r = req(payload);
+    const big = new Request(r, { headers: { "x-forwarded-for": "8.8.8.8", "content-length": "5000000" } });
+    const res = await POST(big);
+    expect(res.status).toBe(413);
+    expect(sendRequestEmail).not.toHaveBeenCalled();
+  });
   it("413 for a non-image file", async () => {
     const res = await POST(req(payload, [jpg(10, "text/plain")]));
     expect(res.status).toBe(413);

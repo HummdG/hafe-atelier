@@ -13,6 +13,10 @@ export async function POST(request: Request) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || "local";
   if (!allow(ip)) return NextResponse.json({ error: "rate_limited" }, { status: 429 });
 
+  if (Number(request.headers.get("content-length")) > MAX_TOTAL_BYTES + 256_000) {
+    return NextResponse.json({ error: "too_large" }, { status: 413 });
+  }
+
   let form: FormData;
   try {
     form = await request.formData();
