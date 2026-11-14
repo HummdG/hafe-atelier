@@ -14,9 +14,9 @@ const LONG_EDGE = 1600;
 /** @type {{ src: string; out: string; crop?: { left: number; top: number; width: number; height: number } }[]} */
 const jobs = [
   // Step 01: inspiration references. Crop away the retailer's site header and thumbnail strip.
-  { src: "Picture 1.jpg", out: "inspiration-silhouette.jpg", crop: { left: 100, top: 64, width: 400, height: 736 } },
-  { src: "Picture 1.jpg", out: "inspiration-sharara.jpg", crop: { left: 140, top: 500, width: 330, height: 255 } },
-  { src: "Picture 2.png", out: "inspiration-neckline.jpg", crop: { left: 60, top: 20, width: 340, height: 380 } },
+  { src: "Picture 1.jpg", out: "inspiration-silhouette.jpg", crop: { left: 55, top: 64, width: 486, height: 736 } },
+  { src: "Picture 1.jpg", out: "inspiration-sharara.jpg", crop: { left: 130, top: 500, width: 360, height: 255 } },
+  { src: "Picture 2.png", out: "inspiration-neckline.jpg", crop: { left: 50, top: 82, width: 380, height: 325 } },
   // Step 02
   { src: "02_Video_Call.png", out: "consultation.jpg" },
   // Step 03

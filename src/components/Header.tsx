@@ -6,8 +6,9 @@ import { usePathname } from "next/navigation";
 import { useBag } from "./RequestBagProvider";
 import { MenuDrawer } from "./MenuDrawer";
 import { TrolleyIcon } from "./TrolleyIcon";
+import { SLIDER_ROUTES } from "@/lib/slider-routes";
 
-export function Header({ variant }: { variant: "overlay" | "solid" }) {
+export function Header({ variant }: { variant: "overlay" | "floating" | "solid" }) {
   const [open, setOpen] = useState(false);
   const { count, hydrated } = useBag();
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -20,7 +21,9 @@ export function Header({ variant }: { variant: "overlay" | "solid" }) {
   const cls =
     variant === "overlay"
       ? "absolute inset-x-0 top-0 z-30 text-ivory"
-      : "sticky top-0 z-30 border-b border-ink/10 bg-ivory text-ink";
+      : variant === "floating"
+        ? "absolute inset-x-0 top-0 z-30 text-ink"
+        : "sticky top-0 z-30 border-b border-ink/10 bg-ivory text-ink";
 
   return (
     <header className={cls}>
@@ -54,7 +57,12 @@ export function Header({ variant }: { variant: "overlay" | "solid" }) {
   );
 }
 
-/** Picks the header variant from the route: overlay on the home slider, solid elsewhere. */
+/**
+ * Picks the header variant from the route: light text over the home hero, dark text floating
+ * over the other slider pages (so they can fill the viewport), solid elsewhere.
+ */
 export function RouteHeader() {
-  return <Header variant={usePathname() === "/" ? "overlay" : "solid"} />;
+  const pathname = usePathname();
+  const variant = pathname === "/" ? "overlay" : SLIDER_ROUTES.includes(pathname) ? "floating" : "solid";
+  return <Header variant={variant} />;
 }

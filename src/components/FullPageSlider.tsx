@@ -93,7 +93,9 @@ export function FullPageSlider({ sections }: { sections: Section[] }) {
             key={s.id}
             id={s.id}
             aria-label={s.label}
-            className={s.fit === "auto" ? "snap-end" : "h-svh snap-start"}
+            // `relative` contains absolutely positioned descendants (e.g. sr-only text); without it
+            // they resolve against the document and make the page itself scroll behind the slider.
+            className={`relative ${s.fit === "auto" ? "snap-end" : "h-svh snap-start"}`}
           >
             {s.content}
           </section>

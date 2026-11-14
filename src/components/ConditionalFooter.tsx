@@ -2,8 +2,9 @@
 
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
+import { SLIDER_ROUTES } from "@/lib/slider-routes";
 
-/** The home slider renders its own footer, so skip the layout one on "/". */
+/** Slider pages render their own footer slide, so skip the layout one there. */
 export function ConditionalFooter({ children }: { children: ReactNode }) {
-  return usePathname() === "/" ? null : <>{children}</>;
+  return SLIDER_ROUTES.includes(usePathname()) ? null : <>{children}</>;
 }
