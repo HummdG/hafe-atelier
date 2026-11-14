@@ -8,7 +8,7 @@ import { MenuDrawer } from "./MenuDrawer";
 import { TrolleyIcon } from "./TrolleyIcon";
 import { SLIDER_ROUTES } from "@/lib/slider-routes";
 
-export function Header({ variant }: { variant: "overlay" | "floating" | "solid" }) {
+export function Header({ variant }: { variant: "floating" | "solid" }) {
   const [open, setOpen] = useState(false);
   const { count, hydrated } = useBag();
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -19,13 +19,11 @@ export function Header({ variant }: { variant: "overlay" | "floating" | "solid" 
   }, [open]);
   const close = useCallback(() => setOpen(false), []);
   const cls =
-    variant === "overlay"
-      ? "absolute inset-x-0 top-0 z-30 text-ivory"
-      : variant === "floating"
-        ? // Sits over the slider (which owns the scroll), so it needs its own backdrop or the
-          // slide behind it shows through the wordmark mid-scroll and on the footer slide.
-          "absolute inset-x-0 top-0 z-30 border-b border-ink/10 bg-ivory text-ink"
-        : "sticky top-0 z-30 border-b border-ink/10 bg-ivory text-ink";
+    variant === "floating"
+      ? // Sits over the slider (which owns the scroll), so it needs its own backdrop or the
+        // slide behind it shows through the wordmark mid-scroll and on the footer slide.
+        "absolute inset-x-0 top-0 z-30 border-b border-ink/10 bg-ivory text-ink"
+      : "sticky top-0 z-30 border-b border-ink/10 bg-ivory text-ink";
 
   return (
     <header className={cls}>
@@ -60,11 +58,9 @@ export function Header({ variant }: { variant: "overlay" | "floating" | "solid" 
 }
 
 /**
- * Picks the header variant from the route: light text over the home hero, dark text floating
- * over the other slider pages (so they can fill the viewport), solid elsewhere.
+ * Picks the header variant from the route: on slider pages it floats over the full-height
+ * slider (with its own ivory bar so it stays legible over any slide), solid in the flow elsewhere.
  */
 export function RouteHeader() {
-  const pathname = usePathname();
-  const variant = pathname === "/" ? "overlay" : SLIDER_ROUTES.includes(pathname) ? "floating" : "solid";
-  return <Header variant={variant} />;
+  return <Header variant={SLIDER_ROUTES.includes(usePathname()) ? "floating" : "solid"} />;
 }
