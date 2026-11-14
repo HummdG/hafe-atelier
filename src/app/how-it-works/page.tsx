@@ -66,7 +66,7 @@ function StepSlide({ step, index, last }: { step: Step; index: number; last: boo
   const boardFirst = index % 2 === 0;
   const Heading = index === 0 ? "h1" : "p";
   return (
-    <div className="flex h-full flex-col bg-ivory px-6 pb-6 pt-20 md:px-12 md:pb-8 md:pt-24">
+    <div className="flex h-full flex-col bg-ivory px-4 pb-6 pt-20 md:px-12 md:pb-8 md:pt-24">
       <header className="text-center" aria-hidden={index === 0 ? undefined : true}>
         <p className="text-[10px] font-light uppercase tracking-[0.35em] text-umber/70 md:text-xs">How it works</p>
         <Heading className="mt-1 font-serif text-3xl font-light leading-tight text-burgundy md:mt-2 md:text-6xl">
@@ -75,7 +75,7 @@ function StepSlide({ step, index, last }: { step: Step; index: number; last: boo
       </header>
 
       <div className="mx-auto mt-5 flex w-full max-w-[1400px] flex-1 flex-col justify-center gap-5 md:mt-8 md:flex-row md:items-center md:gap-14">
-        <div className={`md:flex-1 ${boardFirst ? "md:order-2" : ""}`}>
+        <div className={`min-w-0 md:flex-1 ${boardFirst ? "md:order-2" : ""}`}>
           <p className="text-xs tracking-[0.3em] text-umber/70 md:text-sm" aria-hidden>
             {String(index + 1).padStart(2, "0")}
           </p>

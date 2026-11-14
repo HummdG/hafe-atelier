@@ -82,13 +82,46 @@ function Polaroid({
 
 /* ---------------------------------------------------------------- 01 */
 
-const notes: { text: string; left: number; top: number }[] = [
-  { text: "Boat neckline", left: 354, top: 151 },
-  { text: "Short sleeves", left: 368, top: 201 },
-  { text: "Simple kameez", left: 345, top: 255 },
-  { text: "Subtle border", left: 342, top: 326 },
-  { text: "Sharara trousers", left: 350, top: 485 },
+/** Polaroid geometry in board px; must mirror the Polaroid component's padding and caption sizes. */
+type Frame = { left: number; top: number; width: number; ratio: number; rotate: number };
+const CQW = W / 100; // board px per cqw
+const MAT = 1.1 * CQW; // p-[1.1cqw]
+const CAPTION = 1 * CQW + 1.55 * CQW * 1.25; // mt-[1cqw] + one line of text-[1.55cqw] leading-tight
+
+/**
+ * Board coordinates of a point inside a polaroid's photo, given as fractions of the photo
+ * (fx, fy), accounting for the white mat, the caption and the CSS rotation about the centre.
+ */
+function pointInPhoto(f: Frame, fx: number, fy: number) {
+  const photoW = f.width - 2 * MAT;
+  const photoH = photoW / f.ratio;
+  const height = MAT + photoH + CAPTION + MAT;
+  const cx = f.left + f.width / 2;
+  const cy = f.top + height / 2;
+  const px = f.left + MAT + fx * photoW - cx;
+  const py = f.top + MAT + fy * photoH - cy;
+  const a = (f.rotate * Math.PI) / 180;
+  return { x: cx + px * Math.cos(a) - py * Math.sin(a), y: cy + px * Math.sin(a) + py * Math.cos(a) };
+}
+
+const silhouette: Frame = { left: 50, top: 150, width: 300, ratio: 288 / 437, rotate: -3 };
+const neckline: Frame = { left: 566, top: 128, width: 250, ratio: 225 / 192, rotate: 3 };
+const sharara: Frame = { left: 566, top: 398, width: 258, ratio: 236 / 167, rotate: 2 };
+
+/**
+ * Each note sits at an anchor point; the line starts at the anchor and ends on the feature.
+ * `side` is the side of the label the anchor is on, so the label grows away from its line and
+ * the line still meets the text if the label's font hits its minimum size on small screens.
+ */
+const notes: { text: string; anchor: { x: number; y: number }; side: "left" | "right"; target: { x: number; y: number } }[] = [
+  { text: "Boat neckline", anchor: { x: 528, y: 170 }, side: "right", target: pointInPhoto(neckline, 0.41, 0.17) },
+  { text: "Short sleeves", anchor: { x: 528, y: 228 }, side: "right", target: pointInPhoto(neckline, 0.6, 0.36) },
+  { text: "Simple kameez", anchor: { x: 382, y: 300 }, side: "left", target: pointInPhoto(silhouette, 0.4, 0.5) },
+  { text: "Subtle border", anchor: { x: 382, y: 372 }, side: "left", target: pointInPhoto(silhouette, 0.66, 0.52) },
+  { text: "Sharara trousers", anchor: { x: 532, y: 508 }, side: "right", target: pointInPhoto(sharara, 0.2, 0.55) },
 ];
+
+const frameStyle = (f: Frame) => at(f.left, f.top, f.width, { rotate: `${f.rotate}deg` });
 
 export function InspirationBoard() {
   return (
@@ -96,44 +129,50 @@ export function InspirationBoard() {
       <Polaroid
         src={`${IMG}/inspiration-silhouette.jpg`}
         alt="Ivory sharara set with a sheer embroidered dupatta, worn on pink stone steps"
-        ratio={288 / 437}
-        sizes="(min-width: 768px) 20vw, 30vw"
+        ratio={silhouette.ratio}
+        sizes="(min-width: 768px) 20vw, 35vw"
         caption="Silhouette reference · Faiza Saqlain"
-        style={at(50, 150, 310, { rotate: "-3deg" })}
+        style={frameStyle(silhouette)}
       />
       <Polaroid
         src={`${IMG}/inspiration-neckline.jpg`}
         alt="Ivory short-sleeved kameez with a boat neckline and embroidered edging"
-        ratio={225 / 192}
-        sizes="(min-width: 768px) 16vw, 25vw"
+        ratio={neckline.ratio}
+        sizes="(min-width: 768px) 16vw, 30vw"
         caption="Neckline and sleeve reference"
-        style={at(552, 132, 250, { rotate: "3deg" })}
+        style={frameStyle(neckline)}
       />
       <Polaroid
         src={`${IMG}/inspiration-sharara.jpg`}
         alt="Close-up of tiered ivory sharara trousers with an embroidered hem"
-        ratio={236 / 167}
-        sizes="(min-width: 768px) 16vw, 25vw"
+        ratio={sharara.ratio}
+        sizes="(min-width: 768px) 16vw, 30vw"
         caption="Sharara detail · Faiza Saqlain"
-        style={at(560, 398, 258, { rotate: "2deg" })}
+        style={frameStyle(sharara)}
       />
 
-      {/* Pointer lines from each note to the detail it describes. */}
+      {/* Pointer lines: anchor → feature, ending in a ringed dot so they read over the photos. */}
       <svg aria-hidden viewBox={`0 0 ${W} ${H}`} className="pointer-events-none absolute inset-0 z-10 h-full w-full">
-        <g fill="none" stroke="#3b2a20" strokeOpacity="0.55" strokeWidth="1">
-          <path d="M498 171 Q540 175 577 187" />
-          <path d="M509 222 Q560 230 602 241" />
-          <path d="M342 285 Q318 312 284 336" />
-          <path d="M340 356 Q318 372 290 384" />
-          <path d="M516 514 L552 525 L604 525" />
-        </g>
+        {notes.map(({ text, anchor, target }) => {
+          const midX = (anchor.x + target.x) / 2;
+          const d = `M${anchor.x} ${anchor.y} C${midX} ${anchor.y} ${midX} ${target.y} ${target.x} ${target.y}`;
+          return (
+            <g key={text}>
+              <path d={d} fill="none" stroke="#fffdf8" strokeWidth="3.5" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+              <path d={d} fill="none" stroke="#4f1f27" strokeWidth="1.5" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+              <circle cx={target.x} cy={target.y} r="6" fill="#4f1f27" stroke="#fffdf8" strokeWidth="2.5" vectorEffect="non-scaling-stroke" />
+            </g>
+          );
+        })}
       </svg>
       <ul className="contents">
         {notes.map((n) => (
           <li
             key={n.text}
-            className="z-10 whitespace-nowrap font-serif text-[2.85cqw] leading-none italic text-burgundy/90"
-            style={at(n.left, n.top)}
+            className="z-10 whitespace-nowrap font-serif text-[max(2.85cqw,11px)] leading-none italic text-burgundy"
+            style={at(n.anchor.x + (n.side === "right" ? -8 : 8), n.anchor.y, undefined, {
+              translate: n.side === "right" ? "-100% -55%" : "0 -55%",
+            })}
           >
             {n.text}
           </li>
