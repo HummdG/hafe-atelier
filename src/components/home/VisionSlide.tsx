@@ -17,7 +17,7 @@ export function VisionSlide() {
           Start your piece
         </Link>
         <Link
-          href="/bespoke#how"
+          href="/how-it-works"
           className="border border-ink px-8 py-3 text-xs font-light uppercase tracking-[0.3em] transition-colors hover:bg-ink hover:text-ivory focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
           How it works

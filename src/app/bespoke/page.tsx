@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Photo } from "@/components/Photo";
 import { site } from "@/lib/site";
 import { BespokeBrief } from "./BespokeBrief";
@@ -7,13 +8,6 @@ export const metadata: Metadata = {
   title: "Bespoke",
   description: "Start from scratch. Describe the piece you imagine and our atelier will bring it to life.",
 };
-
-const steps = [
-  { title: "Share your vision", body: "Tell us the occasion, colours and silhouette you imagine." },
-  { title: "Consultation", body: "We talk through fabric, embroidery and fit with you, usually on WhatsApp." },
-  { title: "Crafted in Pakistan", body: `Your piece is cut and embroidered by hand in ${site.leadTime}.` },
-  { title: "Delivered worldwide", body: "Finished, pressed and sent to your door, wherever you are." },
-];
 
 export default function BespokePage() {
   return (
@@ -33,17 +27,16 @@ export default function BespokePage() {
         </div>
       </section>
 
-      <section id="how" className="mx-auto max-w-[1400px] scroll-mt-24 px-6 py-24 md:px-12 md:py-36">
-        <h2 className="max-w-xl font-serif text-4xl font-light leading-tight md:text-6xl">How it works</h2>
-        <ol className="mt-16 grid gap-x-12 gap-y-14 md:grid-cols-4">
-          {steps.map((s, i) => (
-            <li key={s.title} className="border-t border-ink/20 pt-6">
-              <span className="font-serif text-3xl font-light text-gold">{i + 1}</span>
-              <h3 className="mt-4 font-serif text-2xl font-light">{s.title}</h3>
-              <p className="mt-3 text-sm font-light leading-relaxed text-ink/75">{s.body}</p>
-            </li>
-          ))}
-        </ol>
+      <section id="how" className="mx-auto max-w-[1400px] scroll-mt-24 px-6 py-24 md:px-12 md:py-32">
+        <p className="max-w-xl font-serif text-2xl font-light leading-snug md:text-3xl">
+          From your first reference to delivery at your door, in five steps.
+        </p>
+        <Link
+          href="/how-it-works"
+          className="mt-6 inline-block border-b border-ink/40 pb-1 text-xs font-light uppercase tracking-[0.25em] transition-colors hover:border-gold hover:text-gold focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
+        >
+          See how it works &rarr;
+        </Link>
       </section>
 
       <section id="brief" className="scroll-mt-24 bg-ivory px-6 pb-28 md:px-12 md:pb-40">
