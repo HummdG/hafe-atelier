@@ -22,7 +22,9 @@ export function Header({ variant }: { variant: "overlay" | "floating" | "solid" 
     variant === "overlay"
       ? "absolute inset-x-0 top-0 z-30 text-ivory"
       : variant === "floating"
-        ? "absolute inset-x-0 top-0 z-30 text-ink"
+        ? // Sits over the slider (which owns the scroll), so it needs its own backdrop or the
+          // slide behind it shows through the wordmark mid-scroll and on the footer slide.
+          "absolute inset-x-0 top-0 z-30 border-b border-ink/10 bg-ivory text-ink"
         : "sticky top-0 z-30 border-b border-ink/10 bg-ivory text-ink";
 
   return (
